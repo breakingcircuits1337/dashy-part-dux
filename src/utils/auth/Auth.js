@@ -1,5 +1,5 @@
 import sha256 from 'crypto-js/sha256';
-import ConfigAccumulator from '@/utils/config/ConfigAccumalator';
+import ConfigAccumulator from '@/utils/config/ConfigAccumulator';
 import ErrorHandler from '@/utils/logging/ErrorHandler';
 import { cookieKeys, localStorageKeys, userStateEnum } from '@/utils/config/defaults';
 import { isKeycloakEnabled } from '@/utils/auth/KeycloakAuth';

@@ -331,9 +331,13 @@ export default {
     },
   },
   mounted() {
-    // Set the section width, and recalculate when section resized
+    // Set the section width, and recalculate when section resized (debounced to avoid thrashing)
     if (this.$refs[this.sectionRef]) {
-      this.resizeObserver = new ResizeObserver(this.calculateSectionWidth);
+      let rafId = null;
+      this.resizeObserver = new ResizeObserver(() => {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(this.calculateSectionWidth);
+      });
       this.resizeObserver.observe(this.$refs[this.sectionRef].$el);
     }
   },

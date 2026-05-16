@@ -33,10 +33,15 @@ const isAuthenticated = () => {
 };
 
 /* Determines if the page URL is an OAuth2 redirect-back from OIDC or Keycloak
- * Passes through the auth guard, so the callback ?code reaches the handler */
-const isOauthCallback = () =>
-  new URLSearchParams(window.location.search).has('code')
-  && (isOidcEnabled() || isKeycloakEnabled());
+ * Memoized so the URL is only parsed once per page load, not on every navigation */
+let _oauthCallbackCache = null;
+const isOauthCallback = () => {
+  if (_oauthCallbackCache === null) {
+    _oauthCallbackCache = new URLSearchParams(window.location.search).has('code')
+      && (isOidcEnabled() || isKeycloakEnabled());
+  }
+  return _oauthCallbackCache;
+};
 
 /* Resolve landing view from appConfig.startingView at runtime if set */
 const resolveStartingView = () => {

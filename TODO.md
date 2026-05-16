@@ -22,19 +22,19 @@ Generated from code review. Items are ordered by priority.
 
 ## P2 — Reliability
 
-- [ ] **store.js**: Call `validateConfig()` before committing parsed YAML/JSON config
-- [ ] **WidgetMixin.js**: Wrap `JSON.stringify(body)` in try/catch
-- [ ] **Section.vue**: Debounce ResizeObserver callback
-- [ ] **WidgetBase.vue**: Null-check `$refs` before calling widget methods
+- [x] **store.js**: Call `validateConfig()` before committing parsed YAML/JSON config
+- [x] **WidgetMixin.js**: Wrap `JSON.stringify(body)` in try/catch
+- [x] **Section.vue**: Debounce ResizeObserver callback
+- [x] **WidgetBase.vue**: Null-check `$refs` before calling widget methods
 
 ## P3 — Code Quality
 
-- [ ] **Rename**: `ConfigAccumalator.js` → `ConfigAccumulator.js` and update all imports
-- [ ] **WidgetBase.vue**: Extract COMPAT widget mapping to a `widgetRegistry.js` file
+- [x] **Rename**: `ConfigAccumalator.js` → `ConfigAccumulator.js` and update all imports
+- [x] **WidgetBase.vue**: Extract COMPAT widget mapping to a `widgetRegistry.js` file
 - [ ] **router.js**: Replace `confirm()` in edit-mode guard with async modal
 - [ ] **store.js**: Extract `getLocalOrDefault(key, fallback)` helper for repeated getter pattern
-- [ ] **router.js**: Memoize `isOauthCallback()` — computed once, not on every navigation
-- [ ] **ConfigHelpers.js / ConfigAccumalator.js**: Use `structuredClone` instead of spread for config objects
+- [x] **router.js**: Memoize `isOauthCallback()` — computed once, not on every navigation
+- [x] **ConfigHelpers.js**: Use `structuredClone` instead of spread in `stripRootOwnedFields`
 
 ## P4 — Developer Experience
 

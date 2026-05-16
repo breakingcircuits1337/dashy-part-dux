@@ -46,101 +46,9 @@ import UpdateIcon from '@/assets/interface-icons/widget-update.svg';
 import EditIcon from '@/assets/interface-icons/config-edit-json.svg';
 import BinIcon from '@/assets/interface-icons/interactive-editor-remove.svg';
 import LoadingAnimation from '@/assets/interface-icons/loader.svg';
+import WIDGET_REGISTRY from './widgetRegistry';
 
 const widgetModules = import.meta.glob('./*.vue');
-
-const COMPAT = {
-  'adguard-dns-info': 'AdGuardDnsInfo',
-  'adguard-filter-status': 'AdGuardFilterStatus',
-  'adguard-stats': 'AdGuardStats',
-  'adguard-top-domains': 'AdGuardTopDomains',
-  addy: 'AnonAddy',
-  anonaddy: 'AnonAddy',
-  apod: 'Apod',
-  'blacklist-check': 'BlacklistCheck',
-  chucknorris: 'ChuckNorris',
-  clock: 'Clock',
-  'code-stats': 'CodeStats',
-  'covid-stats': 'CovidStats',
-  'crypto-price-chart': 'CryptoPriceChart',
-  'crypto-watch-list': 'CryptoWatchList',
-  'custom-search': 'CustomSearch',
-  'custom-list': 'CustomList',
-  'cve-vulnerabilities': 'CveVulnerabilities',
-  'domain-monitor': 'DomainMonitor',
-  'drone-ci': 'DroneCi',
-  embed: 'EmbedWidget',
-  'eth-gas-prices': 'EthGasPrices',
-  'exchange-rates': 'ExchangeRates',
-  filebrowser: 'Filebrowser',
-  'flight-data': 'Flights',
-  'github-profile-stats': 'GitHubProfile',
-  'github-trending-repos': 'GitHubTrending',
-  'gl-alerts': 'GlAlerts',
-  'gl-current-cores': 'GlCpuCores',
-  'gl-current-cpu': 'GlCpuGauge',
-  'gl-cpu-speedometer': 'GlCpuSpeedometer',
-  'gl-cpu-history': 'GlCpuHistory',
-  'gl-disk-io': 'GlDiskIo',
-  'gl-disk-space': 'GlDiskSpace',
-  'gl-ip-address': 'GlIpAddress',
-  'gl-load-history': 'GlLoadHistory',
-  'gl-current-mem': 'GlMemGauge',
-  'gl-mem-speedometer': 'GlMemSpeedometer',
-  'gl-mem-history': 'GlMemHistory',
-  'gl-network-interfaces': 'GlNetworkInterfaces',
-  'gl-network-traffic': 'GlNetworkTraffic',
-  'gl-system-load': 'GlSystemLoad',
-  'gl-uptime': 'GlancesUptime',
-  'gl-cpu-temp': 'GlCpuTemp',
-  'gluetun-status': 'GluetunStatus',
-  'health-checks': 'HealthChecks',
-  'hackernews-trending': 'HackernewsTrending',
-  iframe: 'IframeWidget',
-  image: 'ImageWidget',
-  joke: 'Jokes',
-  linkding: 'Linkding',
-  'minecraft-status': 'MinecraftStatus',
-  'mullvad-status': 'MullvadStatus',
-  mvg: 'Mvg',
-  'mvg-connection': 'MvgConnection',
-  'nd-cpu-history': 'NdCpuHistory',
-  'nd-load-history': 'NdLoadHistory',
-  'nd-ram-history': 'NdRamHistory',
-  'news-headlines': 'NewsHeadlines',
-  'nextcloud-notifications': 'NextcloudNotifications',
-  'nextcloud-php-opcache': 'NextcloudPhpOpcache',
-  'nextcloud-stats': 'NextcloudStats',
-  'nextcloud-system': 'NextcloudSystem',
-  'nextcloud-user': 'NextcloudUser',
-  'nextcloud-user-status': 'NextcloudUserStatus',
-  'pi-hole-stats': 'PiHoleStats',
-  'pi-hole-stats-v6': 'PiHoleStatsV6',
-  'pi-hole-top-queries': 'PiHoleTopQueries',
-  'pi-hole-top-queries-v6': 'PiHoleTopQueriesV6',
-  'pi-hole-traffic': 'PiHoleTraffic',
-  'pi-hole-traffic-v6': 'PiHoleTrafficV6',
-  'proxmox-lists': 'Proxmox',
-  'public-holidays': 'PublicHolidays',
-  'public-ip': 'PublicIp',
-  'rescue-time': 'RescueTime',
-  'rss-feed': 'RssFeed',
-  sabnzbd: 'Sabnzbd',
-  'sports-scores': 'SportsScores',
-  'stat-ping': 'StatPing',
-  'stock-price-chart': 'StockPriceChart',
-  'synology-download': 'SynologyDownload',
-  'system-info': 'SystemInfo',
-  'tfl-status': 'TflStatus',
-  trmm: 'TacticalRMM',
-  'uptime-kuma': 'UptimeKuma',
-  'uptime-kuma-status-page': 'UptimeKumaStatusPage',
-  'wallet-balance': 'WalletBalance',
-  weather: 'Weather',
-  'weather-forecast': 'WeatherForecast',
-  'xkcd-comic': 'XkcdComic',
-  'gl-compact-metrics': 'GlCompactMetrics',
-};
 
 export default {
   name: 'Widget',
@@ -198,7 +106,7 @@ export default {
       return this.widget.hideControls;
     },
     component() {
-      const type = COMPAT[this.widgetType] || this.widget.type;
+      const type = WIDGET_REGISTRY[this.widgetType] || this.widget.type;
       if (!type) {
         ErrorHandler('Widget type was not found');
         return null;
@@ -206,7 +114,8 @@ export default {
       const path = `./${type}.vue`;
       const loader = widgetModules[path];
       if (!loader) {
-        ErrorHandler(`Widget component not found: ${type}`);
+        const known = Object.keys(WIDGET_REGISTRY).join(', ');
+        ErrorHandler(`Unknown widget type '${this.widgetType}'. Valid types: ${known}`);
         return defineAsyncComponent(() => import('./Blank.vue'));
       }
       return defineAsyncComponent(() => loader().catch(() => import('./Blank.vue')));
@@ -216,7 +125,8 @@ export default {
     /* Calls update data method on widget */
     update() {
       this.error = false;
-      this.$refs[this.widgetRef].update();
+      const ref = this.$refs[this.widgetRef];
+      if (ref && typeof ref.update === 'function') ref.update();
     },
     /* Shows message when error occurred */
     handleError(msg) {

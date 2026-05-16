@@ -1,4 +1,4 @@
-import ConfigAccumulator from '@/utils/config/ConfigAccumalator';
+import ConfigAccumulator from '@/utils/config/ConfigAccumulator';
 import { localStorageKeys } from '@/utils/config/defaults';
 import ErrorHandler from '@/utils/logging/ErrorHandler';
 import { statusMsg, statusErrorMsg } from '@/utils/logging/CoolConsole';

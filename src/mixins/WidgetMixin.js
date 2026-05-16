@@ -108,7 +108,13 @@ const WidgetMixin = {
       // Request Options
       const method = protocol || 'GET';
       const url = this.useProxy ? this.proxyReqEndpoint : endpoint;
-      const data = JSON.stringify(body || {});
+      let data;
+      try {
+        data = JSON.stringify(body || {});
+      } catch (e) {
+        this.error(`Failed to serialize request body: ${e.message}`);
+        return Promise.reject(e);
+      }
       const CustomHeaders = options || null;
       const headers = this.useProxy
         ? { 'Target-URL': endpoint, CustomHeaders: JSON.stringify(CustomHeaders) } : CustomHeaders;

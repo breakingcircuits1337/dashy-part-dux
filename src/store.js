@@ -15,6 +15,7 @@ import {
   getUserState,
 } from '@/utils/auth/Auth';
 import { localStorageKeys, theme as defaultTheme } from '@/utils/config/defaults';
+import { validateConfig } from '@/utils/config/validateConfig';
 
 const {
   INITIALIZE_CONFIG,
@@ -472,6 +473,11 @@ const store = createStore({
         if (!data.appConfig) data.appConfig = {};
         if (!data.pageInfo) data.pageInfo = {};
         if (!data.sections) data.sections = [];
+        // Warn on schema violations without blocking load
+        const { valid, errors } = validateConfig(data);
+        if (!valid) {
+          ErrorHandler(`Config has ${errors.length} schema issue(s): ${errors.slice(0, 3).map(e => e.instancePath ? `${e.instancePath} ${e.message}` : e.message).join('; ')}`);
+        }
         // Set the state, and return data
         commit(SET_ROOT_CONFIG, data);
         commit(CRITICAL_ERROR_MSG, null);

@@ -1,4 +1,4 @@
-import ConfigAccumulator from '@/utils/config/ConfigAccumalator';
+import ConfigAccumulator from '@/utils/config/ConfigAccumulator';
 import filterUserSections from '@/utils/CheckSectionVisibility';
 import { languages } from '@/utils/languages';
 import {
@@ -14,13 +14,12 @@ export const RESERVED_ROOT = 'main';
 const ROOT_OWNED_TOP_LEVEL = ['pages'];
 const ROOT_OWNED_APP_CONFIG = ['auth'];
 
-/* Return a shallow copy of `config` with root-owned fields removed */
+/* Return a deep copy of `config` with root-owned fields removed */
 export const stripRootOwnedFields = (config) => {
   if (!config || typeof config !== 'object') return config;
-  const clean = { ...config };
+  const clean = structuredClone(config);
   ROOT_OWNED_TOP_LEVEL.forEach((key) => delete clean[key]);
   if (clean.appConfig && typeof clean.appConfig === 'object') {
-    clean.appConfig = { ...clean.appConfig };
     ROOT_OWNED_APP_CONFIG.forEach((key) => delete clean.appConfig[key]);
   }
   return clean;

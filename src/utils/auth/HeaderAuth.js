@@ -1,6 +1,6 @@
 import sha256 from 'crypto-js/sha256';
 import request from '@/utils/request';
-import ConfigAccumulator from '@/utils/config/ConfigAccumalator';
+import ConfigAccumulator from '@/utils/config/ConfigAccumulator';
 import { cookieKeys, localStorageKeys, serviceEndpoints } from '@/utils/config/defaults';
 import { InfoHandler, ErrorHandler, InfoKeys } from '@/utils/logging/ErrorHandler';
 import { logout as authLogout } from '@/utils/auth/Auth';
