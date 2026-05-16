@@ -16,8 +16,8 @@ const encryptData = (data, password) => {
 /* Decrypt, decode and parse received data */
 const decryptData = (data, password) => aes.decrypt(data, password).toString(Utf8);
 
-/* Returns a splice of the hash of the users password */
-const makeSubHash = (pass) => sha256(pass).toString().slice(0, 14);
+/* Returns the full SHA-256 hash of the user's password for server-side verification */
+const makeSubHash = (pass) => sha256(pass).toString();
 
 /* Makes the backup */
 export const backup = (data, password) => request.post(ENDPOINT, {

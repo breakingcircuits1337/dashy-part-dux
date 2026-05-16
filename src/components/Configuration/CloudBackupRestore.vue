@@ -199,9 +199,10 @@ export default {
       InfoHandler(msg, InfoKeys.CLOUD_BACKUP);
       this.$toast.success(msg);
     },
-    /* Call to hash function, to hash the users chosen/ entered password */
+    /* Hash the password bound to the backup ID so it can't be attacked with a rainbow table */
     makeHash(pass) {
-      return sha256(pass).toString();
+      const salt = this.backupId || 'dashy-backup';
+      return sha256(pass + salt).toString();
     },
     /* After backup is applied, hash the backup ID, and save in browser storage */
     setBackupIdLocally(backupId, pass) {

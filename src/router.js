@@ -94,9 +94,12 @@ const router = createRouter({
       path: routePaths.login,
       name: 'login',
       component: () => import('./views/Login.vue'),
-      beforeEnter: (to, from, next) => {
+      beforeEnter: async (to, from, next) => {
         // If the user already logged in + guest mode not enabled, then redirect home
-        if (isAuthenticated() && !isGuestAccessEnabled()) router.push({ path: '/' });
+        if (isAuthenticated() && !isGuestAccessEnabled()) {
+          await router.push({ path: '/' }).catch(() => {});
+          return;
+        }
         next();
       },
     },

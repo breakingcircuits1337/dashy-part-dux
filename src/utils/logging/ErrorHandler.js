@@ -2,18 +2,33 @@ import { warningMsg, statusMsg, statusErrorMsg } from '@/utils/logging/CoolConso
 import { sessionStorageKeys } from '@/utils/config/defaults';
 import { reportError } from '@/utils/logging/SentryRef';
 
-/* Makes the current time, like hh:mm:ss */
+const MAX_ERROR_LOG_BYTES = 50 * 1024; // 50 KB cap to prevent sessionStorage quota overflow
+
+/* Makes the current datetime, like YYYY-MM-DD hh:mm:ss */
 const makeTime = () => {
   const now = new Date();
   const pad = (digit) => String(digit).padStart(2, '0');
-  return `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  const date = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  const time = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  return `${date} ${time}`;
 };
 
-/* Appends recent errors to local storage, for viewing in the UI */
+/* Appends recent errors to sessionStorage, trimming oldest entries when over cap */
 const appendToErrorLog = (msg) => {
   let errorLog = sessionStorage.getItem(sessionStorageKeys.ERROR_LOG) || '';
   errorLog += `[${makeTime()}] ${msg}\n`;
-  sessionStorage.setItem(sessionStorageKeys.ERROR_LOG, errorLog);
+  if (errorLog.length > MAX_ERROR_LOG_BYTES) {
+    // Drop the oldest half of the log when we hit the cap
+    const half = Math.floor(errorLog.length / 2);
+    const cutPoint = errorLog.indexOf('\n', half);
+    errorLog = cutPoint !== -1 ? errorLog.slice(cutPoint + 1) : '';
+  }
+  try {
+    sessionStorage.setItem(sessionStorageKeys.ERROR_LOG, errorLog);
+  } catch (e) {
+    // Quota exceeded — clear and start fresh
+    sessionStorage.removeItem(sessionStorageKeys.ERROR_LOG);
+  }
 };
 
 /**

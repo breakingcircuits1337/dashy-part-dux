@@ -57,7 +57,12 @@ const generateUserToken = (user) => {
     return undefined;
   }
   const envKey = (user.password || '').replace(/^VUE_APP_/, 'VITE_APP_');
-  const passHash = user.hash || sha256(import.meta.env[envKey]).toString().toUpperCase();
+  const resolvedEnvPass = import.meta.env[envKey];
+  if (!user.hash && !resolvedEnvPass) {
+    ErrorHandler(`Cannot generate token for user '${user.user}': no hash or env password found`);
+    return undefined;
+  }
+  const passHash = user.hash || sha256(resolvedEnvPass).toString().toUpperCase();
   const strAndUpper = (input) => input.toString().toUpperCase();
   const sha = sha256(strAndUpper(user.user) + strAndUpper(passHash));
   return strAndUpper(sha);

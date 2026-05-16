@@ -37,7 +37,9 @@ export default class ConfigAccumulator {
     let usersAppConfig = { ...defaultAppConfig };
     if (localStorage[localStorageKeys.APP_CONFIG]) {
       try { usersAppConfig = JSON.parse(localStorage[localStorageKeys.APP_CONFIG]); }
-      catch { ErrorHandler('Malformed app config in local storage'); }
+      catch (e) {
+        ErrorHandler(`Malformed app config in local storage — falling back to defaults. Clear your browser storage if this persists. (${e.message})`);
+      }
     } else if (Object.keys(appConfigFile).length > 0) {
       usersAppConfig = { ...appConfigFile };
     }
@@ -63,7 +65,9 @@ export default class ConfigAccumulator {
     if (localStorage[localStorageKeys.PAGE_INFO]) {
        
       try { localPageInfo = JSON.parse(localStorage[localStorageKeys.PAGE_INFO]); }
-      catch { ErrorHandler('Malformed pageInfo data in local storage'); }
+      catch (e) {
+        ErrorHandler(`Malformed pageInfo in local storage — falling back to defaults. (${e.message})`);
+      }
     }
     const filePageInfo = (this.conf && this.conf.pageInfo) ? this.conf.pageInfo : {};
     return { ...defaultPageInfo, ...filePageInfo, ...localPageInfo };
@@ -78,8 +82,8 @@ export default class ConfigAccumulator {
       try {
         const json = JSON.parse(localSections);
         if (json.length >= 1) sections = json;
-      } catch {
-        ErrorHandler('Malformed section data in local storage');
+      } catch (e) {
+        ErrorHandler(`Malformed section data in local storage — falling back to config file. (${e.message})`);
       }
     }
     // If sections were not set from local data, then use config file instead

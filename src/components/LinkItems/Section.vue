@@ -233,7 +233,7 @@ export default {
     },
     effectiveColsSpan() {
       const { cols } = this.displayData;
-      if (!cols) return cols;
+      if (cols == null) return undefined;
       return Math.min(this.activeColCount, cols);
     },
   },
