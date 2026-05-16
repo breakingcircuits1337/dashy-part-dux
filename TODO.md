@@ -38,8 +38,8 @@ Generated from code review. Items are ordered by priority.
 
 ## P4 — Developer Experience
 
-- [ ] **JsonEditor.vue**: Add `beforeunload` warning for unsaved changes
+- [x] **JsonEditor.vue**: Add `beforeunload` warning for unsaved changes
 - [ ] **CloudBackupRestore.vue**: Add password confirmation field on backup creation
-- [ ] **.env**: Add security guidance section (note which `VITE_APP_*` vars are frontend-visible)
+- [x] **.env**: Add security guidance section (note which `VITE_APP_*` vars are frontend-visible)
 - [ ] **ErrorHandler.js**: Clear error logs older than 24 hours on init
-- [ ] **WidgetBase.vue**: Add widget type validation against registry
+- [x] **WidgetBase.vue**: Widget type validation — unknown type now lists all valid types in error message

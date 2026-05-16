@@ -221,8 +221,16 @@ export default {
   },
   mounted() {
     this.createEditor();
+    this._beforeUnloadHandler = (e) => {
+      if (this.view && this.view.state.doc.toString() !== this.initialDoc) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', this._beforeUnloadHandler);
   },
   beforeUnmount() {
+    window.removeEventListener('beforeunload', this._beforeUnloadHandler);
     if (this.view) {
       this.view.destroy();
       this.view = null;
